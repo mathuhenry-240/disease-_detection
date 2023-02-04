@@ -1,28 +1,23 @@
-const express = require('express')
-const app = express()
-const africastalking = require('africastalking')
+const app = require('express')()
+const http = require('http').Server(app)
+const cors = require('cors')
+const bodyparser = require('body-parser')
 const dotenv = require('dotenv')
+require('./connections/db')
 
 dotenv.config()
 
-const AT = africastalking({username:'infostack',apiKey:'1f60428d00b9f30ff25d33b18d062fa4e65f90283ad6319a5c6839356d63f9f4'}).SMS
+app.use(cors({origin:true, credentials:true}))
+app.use(bodyparser.json())
 
-const sendSms = async () => {
-    const output = await AT.send({
-        to: ['+254758987514','+254725037444'],
-        message: 'hello world, build with  me',
-        enqueue:true
-    })
-    console.log({ output })
-    console.log("hello")
-
-    
-} 
-sendSms();
-
-console.log('hello')
+const sdd = require('./routes/disease')
 
 
 
 
-app.listen(process.env.PORT, ()=>console.log(`server is running on port ${process.env.PORT}`))
+app.use('/disease',sdd)
+
+
+
+
+app.listen(process.env.PORT,()=>console.log(`server is running on port ${process.env.PORT}\n http://localhost:${process.env.PORT}/`))
